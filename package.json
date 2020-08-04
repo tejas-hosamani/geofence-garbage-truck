@@ -8,7 +8,8 @@
     "url": "https://github.com/CodingCreate101/geofence-garbage-truck"
   },
   "scripts": {
-    "dev": "nodemon server.js",
+    "dev": "node server.js",
+    "dev_be": "nodemon server.js",
     "build": "next build",
     "start": "cross-env NODE_ENV=production node server.js"
   },
@@ -19,7 +20,9 @@
     "express": "^4.17.1",
     "next": "latest",
     "react": "^16.13.1",
-    "react-dom": "^16.13.1"
+    "react-dom": "^16.13.1",
+    "socket.io": "^2.3.0",
+    "socket.io-client": "^2.3.0"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",
