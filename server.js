@@ -35,7 +35,7 @@ app.prepare().then(() => {
   /** User flow
    * * 1. Opens website
    * * 2. Selects truck
-   * * This could be multistep process when scaled - selecting state, distrcit etc
+   * * This could be multistep process when scaled - selecting state, district etc
    * * 3. Select one of areas that truck visits/stops
    * * 4. Set radius or leave to default
    *
