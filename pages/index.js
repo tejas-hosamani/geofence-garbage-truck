@@ -24,13 +24,16 @@ function Home() {
       <Link href="/select-truck">
         <a>Select Truck</a>
       </Link>
-
       <Link href="/track-truck">
         <a>Track Truck</a>
       </Link>
-
       <Link href="/register-new-truck">
         <a>Register New Truck</a>
+      </Link>
+      <br />
+      Only for truck driver: <br />
+      <Link href="/broadcast">
+        <a>Broadcast location</a>
       </Link>
       <style jsx>{`
         a {
