@@ -37,7 +37,11 @@ function broadcast() {
   }, []);
 
   const geoLocationSuccess = position => {
-    setLocationData([...locationData, position]);
+    const getTenResults = [position, ...locationData];
+    if (getTenResults.length > 50) {
+      getTenResults.pop();
+    }
+    setLocationData([...getTenResults]);
   };
 
   const geoLocationError = error => {
@@ -46,7 +50,7 @@ function broadcast() {
 
   const options = {
     enableHighAccuracy: true,
-    maximumAge: 0,
+    maximumAge: 10,
   };
 
   const getLocation = () => {
