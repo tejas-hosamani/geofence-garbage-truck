@@ -46,6 +46,7 @@ function broadcast() {
 
   const options = {
     enableHighAccuracy: true,
+    maximumAge: 0,
   };
 
   const getLocation = () => {
