@@ -36,11 +36,25 @@ function broadcast() {
     }
   }, []);
 
+  const geoLocationSuccess = position => {
+    setLocationData([...locationData, position]);
+  };
+
+  const geoLocationError = error => {
+    console.error("There was an error", error);
+  };
+
+  const options = {
+    enableHighAccuracy: true,
+  };
+
   const getLocation = () => {
     if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(position => {
-        setLocationData([...locationData, position]);
-      });
+      navigator.geolocation.getCurrentPosition(
+        geoLocationSuccess,
+        geoLocationError,
+        options
+      );
     } else {
       console.info("Not supported");
     }
@@ -67,13 +81,17 @@ function broadcast() {
         <table>
           <tbody>
             <tr>
-              <th>longitude</th>
-              <th>latitude</th>
-              <th>accuracy</th>
+              <th>longitude</th> {/* decimal degrees */}
+              <th>latitude</th> {/* decimal degrees */}
+              <th>accuracy</th> {/* In meters */}
               <th>altitude</th>
               <th>altitudeAccuracy</th>
               <th>heading</th>
-              <th>speed</th>
+              {/*  the direction in which the device is traveling. 
+                  Zero degrees represents true true north, and the direction is determined 
+                  clockwise (which means that east is 90 degrees and west is 270 degrees). 
+              */}
+              <th>speed</th> {/* meters per second */}
               <th>timestamp</th>
             </tr>
             {locationData.map(location => {
