@@ -48,10 +48,10 @@ app.prepare().then(() => {
   io.on("connection", socket => {
     console.info("made socket connection", socket.id);
 
-    socket.on("subscribe_to_truck", truckId => {
-      // respond with available areas to select from that truck
-      socket.join(truckId);
-    });
+    // socket.on("subscribe_to_truck", truckId => {
+    //   // respond with available areas to select from that truck
+    //   socket.join(truckId);
+    // });
 
     // socket.on("message", ({ truckId, message }) => {
     //   socket.to(truckId).emit("message", {
@@ -68,9 +68,27 @@ app.prepare().then(() => {
     //   socket.to(truckId).emit("event2");
     // });
 
-    socket.on("new_visitor", user => {
-      console.info("new_visitor", user);
-      socket.user = user;
+    // socket.on("new_visitor", user => {
+    //   console.info("new_visitor", user);
+    //   socket.user = user;
+    //   socket.emit("new_visitor", "somedata");
+    // });
+
+    // Working
+    // socket.on("truck_location", function (data) {
+    //   console.log(data);
+    //   socket.broadcast.emit("truck_location", data);
+    // });
+
+    // Subscribe to truck with ID
+    socket.on("subscribe_to_truck", ({ truckId }) => {
+      socket.join(truckId);
+    });
+
+    // Broadcast to only subscribed user
+    socket.on("truck_location", function (data) {
+      const { truckId } = data;
+      socket.to(truckId).broadcast.emit("truck_location", data);
     });
 
     socket.on("disconnect", function () {
