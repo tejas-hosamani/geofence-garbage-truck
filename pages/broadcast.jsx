@@ -1,15 +1,82 @@
 import { useEffect, useState } from "react";
-// import openSocket from "socket.io-client";
+import openSocket from "socket.io-client";
 import useInterval from "../lib/useInterval";
+import { getLocalStorage, setLocalStorage } from "../lib/localStorage";
 
 function broadcast() {
+  const [isGeoLocationSupported, setIsGeoLocationSupported] = useState(false);
   const [enableBroadcast, setEnableBroadcast] = useState(false);
   const [socketConnected, setSocketConnected] = useState(false);
   const [locationData, setLocationData] = useState([]);
+  const [socket, setSocket] = useState({});
+  const [currentHaltPoint, setCurrentHaltPoint] = useState({});
+
+  const areCoordsEqual = (coord1, coord2) => {
+    if (locationData.length < 4) {
+      return false;
+    }
+
+    if (
+      typeof coord1.coords === "undefined" ||
+      typeof coord2.coords === "undefined"
+    ) {
+      return false;
+    }
+    return (
+      coord1.coords.longitude === coord2.coords.longitude &&
+      coord1.coords.latitude === coord2.coords.latitude
+    );
+  };
+
+  const checkForHaltPoint = () => {
+    const checkLength = 4;
+    const initCondition = locationData.length > checkLength;
+
+    let currentNode = initCondition ? locationData[0] : {};
+
+    if (initCondition && !areCoordsEqual(currentHaltPoint, currentNode)) {
+      for (let i = 1; i < checkLength; i++) {
+        if (areCoordsEqual(currentNode, locationData[i])) {
+          currentNode = {
+            coords: {
+              latitude: locationData[i].coords.latitude,
+              longitude: locationData[i].coords.longitude,
+            },
+          };
+        } else {
+          return;
+        }
+      }
+      // Store in local storage
+      setCurrentHaltPoint({
+        coords: {
+          latitude: currentNode.coords.latitude,
+          longitude: currentNode.coords.longitude,
+        },
+      });
+
+      const tempHaltPoints = getLocalStorage("truckHaltPoints") || [];
+      tempHaltPoints.push({ ...currentNode });
+      setLocalStorage("truckHaltPoints", tempHaltPoints);
+    }
+  };
+
+  const requestWakeLock = async () => {
+    try {
+      navigator.wakeLock.request("screen").then(lock => {
+        setTimeout(() => lock.release(), 2 * 60 * 60 * 1000);
+      });
+    } catch (err) {
+      // the wake lock request fails - usually system related, such low as battery
+
+      console.error(`${err.name}, ${err.message}`);
+    }
+  };
 
   useInterval(
     () => {
       getLocation();
+      checkForHaltPoint();
     },
     enableBroadcast
       ? process.env.NEXT_PUBLIC_BROADCAST_FREQUENCY * 1000 || 5000
@@ -17,27 +84,39 @@ function broadcast() {
   );
 
   useEffect(() => {
+    setIsGeoLocationSupported("geolocation" in navigator);
     if (!socketConnected) {
       setSocketConnected(true);
-      // const socket = openSocket(process.env.NEXT_PUBLIC_SERVER_URI);
-      // const visitor = {
-      //   ip: "geoplugin_request",
-      //   city: "geoplugin_city",
-      //   state: "geoplugin_region",
-      // };
-      // socket.emit("new_visitor", visitor);
-      // socket.on("visitors", visitors => {
-      //   console.info(visitors, "visitors visitors");
+      const newSocket = openSocket(process.env.NEXT_PUBLIC_SERVER_URI);
+      setSocket(newSocket);
+
+      // newSocket.on("new_visitor", visitors => {
+      //   console.info(visitors, "visitors visitorsddddddddddddd");
       //   // this.setState({
       //   //   visitors,
       //   // });
       // });
-      // console.info("2st UseEffect");
+
+      console.info("2st UseEffect");
     }
   }, []);
 
   const geoLocationSuccess = position => {
-    setLocationData([...locationData, position]);
+    const getTenResults = [position, ...locationData];
+    if (getTenResults.length > 50) {
+      getTenResults.pop();
+    }
+
+    socket.emit("truck_location", {
+      truckId: 22,
+      longitude: position.coords.longitude,
+      latitude: position.coords.latitude,
+      accuracy: position.coords.accuracy,
+      heading: position.coords.heading,
+      speed: position.coords.speed,
+    });
+
+    setLocationData([...getTenResults]);
   };
 
   const geoLocationError = error => {
@@ -46,29 +125,56 @@ function broadcast() {
 
   const options = {
     enableHighAccuracy: true,
-    maximumAge: 0,
+    maximumAge: 10,
   };
 
   const getLocation = () => {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        geoLocationSuccess,
-        geoLocationError,
-        options
-      );
-    } else {
-      console.info("Not supported");
-    }
+    navigator.geolocation.getCurrentPosition(
+      geoLocationSuccess,
+      geoLocationError,
+      options
+    );
   };
+
+  if (typeof window !== "object") {
+    return <h1>Please wait...</h1>;
+  }
+
+  if (!isGeoLocationSupported) {
+    return <h1>Not supported</h1>;
+  }
 
   return (
     <div>
       <h1>Broadcast</h1>
-      <p>
-        This does not broadcast data, yet. This is only to test Geo Location
-        accuracy.
-      </p>
-      <button onClick={() => setEnableBroadcast(!enableBroadcast)}>
+      <button
+        onClick={() => {
+          setEnableBroadcast(!enableBroadcast);
+          if (!enableBroadcast) {
+            requestWakeLock();
+            navigator.geolocation.getCurrentPosition(
+              position => {
+                setCurrentHaltPoint({
+                  coords: {
+                    latitude: position.coords.latitude,
+                    longitude: position.coords.longitude,
+                  },
+                });
+                setLocalStorage("truckHaltPoints", [
+                  {
+                    coords: {
+                      latitude: position.coords.latitude,
+                      longitude: position.coords.longitude,
+                    },
+                  },
+                ]);
+              },
+              geoLocationError,
+              options
+            );
+          }
+        }}
+      >
         Toggle Enable Broadcast
       </button>{" "}
       &nbsp;: {enableBroadcast ? "Enabled" : "Disabled"}
