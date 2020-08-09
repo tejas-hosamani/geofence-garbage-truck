@@ -1,7 +1,11 @@
-// const withPWA = require("next-pwa");
+/* eslint-disable indent */
+const withPWA = require("next-pwa");
 
-// module.exports = withPWA({
-//   pwa: {
-//     dest: "public",
-//   },
-// });
+module.exports =
+  process.env.NODE_ENV === "development"
+    ? {}
+    : withPWA({
+        pwa: {
+          dest: "public",
+        },
+      });
