@@ -9,7 +9,7 @@ if (envVars.error) {
   throw envVars.error;
 }
 
-const PORT = parseInt(process.env.PORT, 10) || 5050;
+const PORT = parseInt(process.env.PORT, 10) || 80;
 
 const dev = process.env.NODE_ENV !== "production";
 const app = next({ dev });
@@ -21,6 +21,11 @@ app.prepare().then(() => {
   server.use(bodyParser.urlencoded({ extended: true }));
   server.use(bodyParser.json());
 
+  server.get("/json", function (req, res) {
+    console.log("GET the json");
+    res.status(200).json({ jsonData: true });
+  });
+
   server.all("*", (req, res) => {
     return handle(req, res);
   });
@@ -29,7 +34,8 @@ app.prepare().then(() => {
     if (err) {
       throw err;
     }
-    console.info(`> Ready on http://localhost:${PORT}`);
+    const actualPort = listeningServer.address().port;
+    console.info("Express is working on port " + actualPort);
   });
 
   /** User flow
