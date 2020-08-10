@@ -3,6 +3,8 @@ import openSocket from "socket.io-client";
 import useInterval from "../lib/useInterval";
 import { getLocalStorage, setLocalStorage } from "../lib/localStorage";
 
+const broadCastFreq = process.env.NEXT_PUBLIC_BROADCAST_FREQUENCY || 5;
+
 function broadcast() {
   const [isGeoLocationSupported, setIsGeoLocationSupported] = useState(false);
   const [enableBroadcast, setEnableBroadcast] = useState(false);
@@ -78,16 +80,17 @@ function broadcast() {
       getLocation();
       checkForHaltPoint();
     },
-    enableBroadcast
-      ? process.env.NEXT_PUBLIC_BROADCAST_FREQUENCY * 1000 || 5000
-      : null
+    enableBroadcast ? broadCastFreq * 1000 || 5000 : null
   );
 
   useEffect(() => {
     setIsGeoLocationSupported("geolocation" in navigator);
     if (!socketConnected) {
       setSocketConnected(true);
-      const newSocket = openSocket(process.env.NEXT_PUBLIC_SERVER_URI);
+      const newSocket = openSocket(
+        process.env.NEXT_PUBLIC_SERVER_URI ||
+          "https://geofence-garbage-truck.herokuapp.com/"
+      );
       setSocket(newSocket);
 
       // newSocket.on("new_visitor", visitors => {

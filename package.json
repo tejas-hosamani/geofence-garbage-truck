@@ -11,8 +11,7 @@
     "dev": "node server.js",
     "dev_be": "nodemon server.js",
     "build": "next build",
-    "start": "cross-env NODE_ENV=production node server.js -p $PORT",
-    "heroku-postbuild": "npm run build"
+    "start": "cross-env NODE_ENV=production node server.js -p $PORT"
   },
   "dependencies": {
     "body-parser": "^1.19.0",

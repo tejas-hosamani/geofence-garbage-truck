@@ -6,7 +6,10 @@ function TrackTruckWithId({ truckId }) {
   const [distance, setDistance] = useState(1000);
 
   useEffect(() => {
-    const newSocket = openSocket(process.env.NEXT_PUBLIC_SERVER_URI);
+    const newSocket = openSocket(
+      process.env.NEXT_PUBLIC_SERVER_URI ||
+        "https://geofence-garbage-truck.herokuapp.com/"
+    );
 
     if (truckId) {
       newSocket.emit("subscribe_to_truck", {
