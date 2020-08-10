@@ -10,7 +10,7 @@
   "scripts": {
     "dev": "node server.js",
     "dev_be": "nodemon server.js",
-    "build": "",
+    "build": "next build",
     "start": "cross-env NODE_ENV=production node server.js -p $PORT"
   },
   "dependencies": {
