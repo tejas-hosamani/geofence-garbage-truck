@@ -1,48 +1,58 @@
-// import openSocket from "socket.io-client";
-import { useEffect } from "react";
-import Link from "next/link";
+import { getCookie } from "../lib/CoockieHandler";
 
-// const socket = openSocket("http://localhost:5050");
+import { useEffect } from "react";
+import { handleRoute } from "../lib/handleRouteAndCookie";
 
 function Home() {
   useEffect(() => {
-    // const visitor = {
-    //   ip: "geoplugin_request",
-    //   city: "geoplugin_city",
-    //   state: "geoplugin_region",
-    // };
-    // socket.emit("new_visitor", visitor);
-    // socket.on("visitors", visitors => {
-    //   this.setState({
-    //     visitors,
-    //   });
-    // });
+    const usageCookie = getCookie("usageType");
+    if (usageCookie) {
+      handleRoute(usageCookie);
+    }
   }, []);
+
   return (
-    <div>
-      <h1>Hi there</h1>
-      <Link href="/select-truck">
-        <a>Select Truck</a>
-      </Link>
-      <Link href="/track-truck">
-        <a>Track Truck</a>
-      </Link>
-      <Link href="/register-new-truck">
-        <a>Register New Truck</a>
-      </Link>
-      <br />
-      Only for truck driver: <br />
-      <Link href="/broadcast">
-        <a>Broadcast location</a>
-      </Link>
+    <div className="container">
+      <div>
+        <h2>Why do you want to use this app?</h2>
+        <a onClick={() => handleRoute("track-truck")}>TO TRACK LOCATION</a>
+        <br />
+        <br />
+        OR
+        <br />
+        <br />
+        <strong style={{ color: "#f00", letterSpacing: 1 }}>
+          Only for truck drivers
+        </strong>{" "}
+        <br />
+        <a onClick={() => handleRoute("broadcast")}>TO BROADCAST LOCATION</a>
+        <br />
+      </div>
+
       <style jsx>{`
         a {
+          cursor: pointer;
           display: inline-block;
-          padding: 5px 12px;
+          padding: 12px 15px;
           margin: 5px 10px;
           color: white;
           text-decoration: none;
-          background: #06f;
+          background: linear-gradient(100deg, #1d3557, #457b9d);
+          border-radius: 15px;
+          box-shadow: 0 5px 16px -8px #1d3557;
+          align-self: center;
+          align-items: center;
+        }
+        a:hover {
+          background: linear-gradient(180deg, #1d3557, #457b9d);
+        }
+        .container {
+          // overflow: scroll;
+          display: flex;
+          flex-direction: column;
+          text-align: center;
+          height: calc(100vh - 63px);
+          // justify-content: center;
         }
       `}</style>
     </div>

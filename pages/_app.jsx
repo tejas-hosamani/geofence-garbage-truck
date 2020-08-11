@@ -11,7 +11,7 @@ class MyApp extends App {
     return (
       <>
         <Head>
-          <meta charset="utf-8" />
+          <meta charSet="utf-8" />
           <meta httpEquiv="X-UA-Compatible" content="IE=edge" />
           <meta
             name="viewport"
@@ -45,8 +45,20 @@ class MyApp extends App {
           <meta name="theme-color" content="#317EFB" />
         </Head>
         <Header />
-        <Component {...pageProps} />
+        <div className="container">
+          <Component {...pageProps} />
+        </div>
         <Footer />
+        <style jsx>{`
+          .container {
+            // overflow: scroll;
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+            height: calc(100vh - 63px);
+            // justify-content: center;
+          }
+        `}</style>
       </>
     );
   }

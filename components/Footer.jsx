@@ -1,11 +1,18 @@
-import Link from "next/link";
+import NavLinks from "./NavLinks";
 function Footer() {
   return (
     <div>
-      Footer
-      <Link href="/">
-        <a>Home</a>
-      </Link>
+      <footer className="fooBar">
+        <NavLinks />
+
+        <style jsx>{`
+          .fooBar {
+            background: #ccc;
+            padding: 7px 12px;
+            background: #457b9d;
+          }
+        `}</style>
+      </footer>
     </div>
   );
 }

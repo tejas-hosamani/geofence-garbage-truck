@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import openSocket from "socket.io-client";
 import useInterval from "../lib/useInterval";
-import { getLocalStorage, setLocalStorage } from "../lib/localStorage";
+import { setLocalStorage } from "../lib/localStorage";
+
+const broadCastFreq = process.env.NEXT_PUBLIC_BROADCAST_FREQUENCY || 5;
 
 function broadcast() {
   const [isGeoLocationSupported, setIsGeoLocationSupported] = useState(false);
@@ -9,57 +11,57 @@ function broadcast() {
   const [socketConnected, setSocketConnected] = useState(false);
   const [locationData, setLocationData] = useState([]);
   const [socket, setSocket] = useState({});
-  const [currentHaltPoint, setCurrentHaltPoint] = useState({});
+  // const [currentHaltPoint, setCurrentHaltPoint] = useState({});
 
-  const areCoordsEqual = (coord1, coord2) => {
-    if (locationData.length < 4) {
-      return false;
-    }
+  // const areCoordsEqual = (coord1, coord2) => {
+  //   if (locationData.length < 4) {
+  //     return false;
+  //   }
 
-    if (
-      typeof coord1.coords === "undefined" ||
-      typeof coord2.coords === "undefined"
-    ) {
-      return false;
-    }
-    return (
-      coord1.coords.longitude === coord2.coords.longitude &&
-      coord1.coords.latitude === coord2.coords.latitude
-    );
-  };
+  //   if (
+  //     typeof coord1.coords === "undefined" ||
+  //     typeof coord2.coords === "undefined"
+  //   ) {
+  //     return false;
+  //   }
+  //   return (
+  //     coord1.coords.longitude === coord2.coords.longitude &&
+  //     coord1.coords.latitude === coord2.coords.latitude
+  //   );
+  // };
 
-  const checkForHaltPoint = () => {
-    const checkLength = 4;
-    const initCondition = locationData.length > checkLength;
+  // const checkForHaltPoint = () => {
+  //   const checkLength = 4;
+  //   const initCondition = locationData.length > checkLength;
 
-    let currentNode = initCondition ? locationData[0] : {};
+  //   let currentNode = initCondition ? locationData[0] : {};
 
-    if (initCondition && !areCoordsEqual(currentHaltPoint, currentNode)) {
-      for (let i = 1; i < checkLength; i++) {
-        if (areCoordsEqual(currentNode, locationData[i])) {
-          currentNode = {
-            coords: {
-              latitude: locationData[i].coords.latitude,
-              longitude: locationData[i].coords.longitude,
-            },
-          };
-        } else {
-          return;
-        }
-      }
-      // Store in local storage
-      setCurrentHaltPoint({
-        coords: {
-          latitude: currentNode.coords.latitude,
-          longitude: currentNode.coords.longitude,
-        },
-      });
+  //   if (initCondition && !areCoordsEqual(currentHaltPoint, currentNode)) {
+  //     for (let i = 1; i < checkLength; i++) {
+  //       if (areCoordsEqual(currentNode, locationData[i])) {
+  //         currentNode = {
+  //           coords: {
+  //             latitude: locationData[i].coords.latitude,
+  //             longitude: locationData[i].coords.longitude,
+  //           },
+  //         };
+  //       } else {
+  //         return;
+  //       }
+  //     }
+  //     // Store in local storage
+  //     setCurrentHaltPoint({
+  //       coords: {
+  //         latitude: currentNode.coords.latitude,
+  //         longitude: currentNode.coords.longitude,
+  //       },
+  //     });
 
-      const tempHaltPoints = getLocalStorage("truckHaltPoints") || [];
-      tempHaltPoints.push({ ...currentNode });
-      setLocalStorage("truckHaltPoints", tempHaltPoints);
-    }
-  };
+  //     const tempHaltPoints = getLocalStorage("truckHaltPoints") || [];
+  //     tempHaltPoints.push({ ...currentNode });
+  //     setLocalStorage("truckHaltPoints", tempHaltPoints);
+  //   }
+  // };
 
   const requestWakeLock = async () => {
     try {
@@ -76,26 +78,20 @@ function broadcast() {
   useInterval(
     () => {
       getLocation();
-      checkForHaltPoint();
+      // checkForHaltPoint();
     },
-    enableBroadcast
-      ? process.env.NEXT_PUBLIC_BROADCAST_FREQUENCY * 1000 || 5000
-      : null
+    enableBroadcast ? broadCastFreq * 1000 || 5000 : null
   );
 
   useEffect(() => {
     setIsGeoLocationSupported("geolocation" in navigator);
     if (!socketConnected) {
       setSocketConnected(true);
-      const newSocket = openSocket(process.env.NEXT_PUBLIC_SERVER_URI);
+      const newSocket = openSocket(
+        process.env.NEXT_PUBLIC_SERVER_URI ||
+          "https://geofence-garbage-truck.herokuapp.com/"
+      );
       setSocket(newSocket);
-
-      // newSocket.on("new_visitor", visitors => {
-      //   console.info(visitors, "visitors visitorsddddddddddddd");
-      //   // this.setState({
-      //   //   visitors,
-      //   // });
-      // });
 
       console.info("2st UseEffect");
     }
@@ -108,7 +104,7 @@ function broadcast() {
     }
 
     socket.emit("truck_location", {
-      truckId: 22,
+      truckId: 465,
       longitude: position.coords.longitude,
       latitude: position.coords.latitude,
       accuracy: position.coords.accuracy,
@@ -154,12 +150,12 @@ function broadcast() {
             requestWakeLock();
             navigator.geolocation.getCurrentPosition(
               position => {
-                setCurrentHaltPoint({
-                  coords: {
-                    latitude: position.coords.latitude,
-                    longitude: position.coords.longitude,
-                  },
-                });
+                // setCurrentHaltPoint({
+                //   coords: {
+                //     latitude: position.coords.latitude,
+                //     longitude: position.coords.longitude,
+                //   },
+                // });
                 setLocalStorage("truckHaltPoints", [
                   {
                     coords: {
@@ -224,7 +220,7 @@ function broadcast() {
           border-collapse: collapse;
           border-spacing: 0;
           width: 100%;
-          border: 1px solid #ddd;
+          border: 1px solid #1d3557;
         }
 
         th,
@@ -238,7 +234,7 @@ function broadcast() {
           margin: 5px 10px;
           color: white;
           text-decoration: none;
-          background: #06f;
+          background: #1d3557;
         }
       `}</style>
     </div>

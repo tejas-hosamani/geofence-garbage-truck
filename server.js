@@ -6,7 +6,7 @@ const bodyParser = require("body-parser");
 const socketPackage = require("socket.io");
 
 if (envVars.error) {
-  throw envVars.error;
+  console.error(envVars.error);
 }
 
 const PORT = parseInt(process.env.PORT, 10) || 5050;
