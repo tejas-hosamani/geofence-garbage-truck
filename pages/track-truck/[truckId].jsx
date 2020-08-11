@@ -35,9 +35,6 @@ function TrackTruckWithId({ truckId }) {
 
       const d = R * c; // in metres
       setDistance(d);
-      // this.setState({
-      //   visitors,
-      // });
     });
   }, []);
 
