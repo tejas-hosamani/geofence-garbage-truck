@@ -56,7 +56,7 @@ class MyApp extends App {
             flex-direction: column;
             text-align: center;
             height: calc(100vh - 63px);
-            // justify-content: center;
+            justify-content: center;
           }
         `}</style>
       </>
