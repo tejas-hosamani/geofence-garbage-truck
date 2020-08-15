@@ -99,7 +99,7 @@ function broadcast() {
 
   const geoLocationSuccess = position => {
     const getTenResults = [position, ...locationData];
-    if (getTenResults.length > 50) {
+    if (getTenResults.length > 5) {
       getTenResults.pop();
     }
 
@@ -143,77 +143,49 @@ function broadcast() {
   return (
     <div>
       <h1>Broadcast</h1>
-      <button
+      <br />
+      <p>
+        <small>
+          <em>STATUS:</em>
+        </small>
+      </p>
+      <p className="statusText">{enableBroadcast ? "ON" : "OFF"} </p>
+      <br />
+      <br />
+      <a
+        className={enableBroadcast ? "danger" : ""}
         onClick={() => {
           setEnableBroadcast(!enableBroadcast);
           if (!enableBroadcast) {
             requestWakeLock();
-            navigator.geolocation.getCurrentPosition(
-              position => {
-                // setCurrentHaltPoint({
-                //   coords: {
-                //     latitude: position.coords.latitude,
-                //     longitude: position.coords.longitude,
-                //   },
-                // });
-                setLocalStorage("truckHaltPoints", [
-                  {
-                    coords: {
-                      latitude: position.coords.latitude,
-                      longitude: position.coords.longitude,
-                    },
-                  },
-                ]);
-              },
-              geoLocationError,
-              options
-            );
+            // navigator.geolocation.getCurrentPosition(
+            //   position => {
+            //     // setCurrentHaltPoint({
+            //     //   coords: {
+            //     //     latitude: position.coords.latitude,
+            //     //     longitude: position.coords.longitude,
+            //     //   },
+            //     // });
+            //     // setLocalStorage("truckHaltPoints", [
+            //     //   {
+            //     //     coords: {
+            //     //       latitude: position.coords.latitude,
+            //     //       longitude: position.coords.longitude,
+            //     //     },
+            //     //   },
+            //     // ]);
+            //   },
+            //   geoLocationError,
+            //   options
+            // );
           }
         }}
       >
-        Toggle Enable Broadcast
-      </button>{" "}
-      &nbsp;: {enableBroadcast ? "Enabled" : "Disabled"}
+        {enableBroadcast ? "STOP" : "START"}
+      </a>
       <br />
-      <br />
-      <div
-        style={{
-          overflowX: "auto",
-        }}
-      >
-        <table>
-          <tbody>
-            <tr>
-              <th>longitude</th> {/* decimal degrees */}
-              <th>latitude</th> {/* decimal degrees */}
-              <th>accuracy</th> {/* In meters */}
-              <th>altitude</th>
-              <th>altitudeAccuracy</th>
-              <th>heading</th>
-              {/*  the direction in which the device is traveling. 
-                  Zero degrees represents true true north, and the direction is determined 
-                  clockwise (which means that east is 90 degrees and west is 270 degrees). 
-              */}
-              <th>speed</th> {/* meters per second */}
-              <th>timestamp</th>
-            </tr>
-            {locationData.map(location => {
-              return (
-                <tr key={Math.random()}>
-                  <td>{location.coords.longitude}</td>
-                  <td>{location.coords.latitude}</td>
-                  <td>{location.coords.accuracy}</td>
-                  <td>{location.coords.altitude}</td>
-                  <td>{location.coords.altitudeAccuracy}</td>
-                  <td>{location.coords.heading}</td>
-                  <td>{location.coords.speed}</td>
-                  <td>{location.timestamp}</td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
-      </div>
+      {enableBroadcast ? <p>Leave the application open</p> : ""}
+
       <style jsx>{`
         table {
           overflow-x: auto;
@@ -228,13 +200,34 @@ function broadcast() {
           text-align: left;
           padding: 8px;
         }
-        button {
+        a {
+          cursor: pointer;
           display: inline-block;
-          padding: 5px 12px;
+          padding: 12px 15px;
           margin: 5px 10px;
           color: white;
           text-decoration: none;
           background: #1d3557;
+          border-radius: 15px;
+          box-shadow: 0 5px 16px -8px #1d3557;
+          align-self: center;
+          align-items: center;
+          padding: 30px;
+          font-size: 30px;
+        }
+        a:hover {
+          background: #457b9d;
+        }
+        .danger {
+          background: #e63946ff;
+        }
+        .danger:hover {
+          background: #ff5984;
+        }
+        .statusText {
+          font-size: 40px;
+          margin: 5px;
+          font-weight: bold;
         }
       `}</style>
     </div>

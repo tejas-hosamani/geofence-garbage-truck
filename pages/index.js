@@ -15,7 +15,7 @@ function Home() {
     <div className="container">
       <div>
         <h2>Why do you want to use this app?</h2>
-        <a onClick={() => handleRoute("track-truck")}>TO TRACK LOCATION</a>
+        <a onClick={() => handleRoute("track-truck")}>TRACK TRUCK</a>
         <br />
         <br />
         OR
@@ -25,7 +25,7 @@ function Home() {
           Only for truck drivers
         </strong>{" "}
         <br />
-        <a onClick={() => handleRoute("broadcast")}>TO BROADCAST LOCATION</a>
+        <a onClick={() => handleRoute("broadcast")}>BROADCAST TRUCK LOCATION</a>
         <br />
       </div>
 
@@ -37,7 +37,7 @@ function Home() {
           margin: 5px 10px;
           color: white;
           text-decoration: none;
-          background: linear-gradient(100deg, #1d3557, #457b9d);
+          background: #1d3557;
           border-radius: 15px;
           box-shadow: 0 5px 16px -8px #1d3557;
           align-self: center;
@@ -52,7 +52,7 @@ function Home() {
           flex-direction: column;
           text-align: center;
           height: calc(100vh - 63px);
-          // justify-content: center;
+          justify-content: center;
         }
       `}</style>
     </div>

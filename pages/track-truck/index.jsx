@@ -2,40 +2,29 @@ import Link from "next/link";
 function selectTruck() {
   const TruckList = [
     {
-      truckNumber: "3k23",
+      truckNumber: "TRACK",
       driverName: "Driver Full Name",
       areaCode: "580007",
       areaName: "Kalyan Nagar",
       trackChannel: 465,
       stopLists: [
         {
+          id: 0,
+          longitude: 74.99597,
+          latitude: 15.44171,
+          areaName: "6th Cross - Library",
+        },
+        {
+          id: 1,
           longitude: 74.99663,
           latitude: 15.44174,
-          areaName: "6th Cross",
+          areaName: "6th Cross - post office",
         },
         {
+          id: 2,
           longitude: 74.99704,
           latitude: 15.44051,
-          areaName: "Water tank",
-        },
-      ],
-    },
-    {
-      truckNumber: "4k13",
-      driverName: "Driver Full Name",
-      areaCode: "580001",
-      areaName: "Saptapur",
-      trackChannel: 484,
-      stopLists: [
-        {
-          longitude: 43.0,
-          latitude: 43.0,
-          areaName: "Saptapur Cross",
-        },
-        {
-          longitude: 53.0,
-          latitude: 53.0,
-          areaName: "University Road",
+          areaName: "6th Cross - Water tank",
         },
       ],
     },
@@ -48,14 +37,22 @@ function selectTruck() {
           return (
             <div key={index}>
               {`${index + 1}. `}
+              {`${truck.areaName} - `}
               <Link href={`/track-truck/${truck.trackChannel}`}>
                 <a className="button">{truck.truckNumber}</a>
               </Link>{" "}
-              {`- ${truck.areaName}`}
               <br />
             </div>
           );
         })}
+        <p>
+          <small>
+            <em>
+              More coming soon.. <br />
+              ..if enough people use it.
+            </em>
+          </small>
+        </p>
       </div>
       <br />
       <br />
@@ -72,7 +69,12 @@ function selectTruck() {
           padding: 10px 0px;
         }
         .button {
-          padding: 5px 10px;
+          padding: 8px 15px;
+          background: #39e683;
+          text-decoration: none;
+          color: black;
+          border-radius: 10px;
+          box-shadow: 0 5px 16px -8px #000;
         }
       `}</style>
     </div>
